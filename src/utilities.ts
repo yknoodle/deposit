@@ -15,3 +15,12 @@ export const mergeMap = (v1, v2, merge) => {
             return acc
         }, {})
 }
+export const mergeArrayToMap = (array, kMapper, vMapper, merge) => {
+    return array.reduce((acc, curr) => {
+        const k = kMapper(curr)
+        const v = vMapper(curr)
+        if (acc[k]) acc[k] = merge(acc[k], v)
+        else acc[k] = v
+        return acc
+    }, {})
+}
