@@ -4,12 +4,12 @@
   "main": "dist/index.js",
   "private": true,
   "scripts": {
-    "replit": "npm install && npm test && npm start",
     "start": "tsc && node dist/index.js",
     "test": "mocha -r ts-node/register 'tests/**/*.ts'"
   },
   "dependencies": {
     "cookie-parser": "~1.4.4",
+    "cors": "^2.8.5",
     "debug": "~2.6.9",
     "express": "latest",
     "http-errors": "~1.6.3",
