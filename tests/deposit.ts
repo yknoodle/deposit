@@ -3,14 +3,8 @@ import {computeMonthFund, computeOnceFund, deposit, distributeProportionally, si
 import {mergeMap} from "../src/utilities";
 
 describe('default suite', () => {
-    const oPlan = {
-        'monthly': false,
-        'portfolios': {'cheese':1, 'chicken':2}
-    }
-    const mPlan = {
-        'monthly': true,
-        'portfolios': {'cheese':1, 'chicken':2}
-    }
+    const oPlan = { 'cheese':1, 'chicken':2 }
+    const mPlan = { 'cheese':1, 'chicken':2 }
     it('sample test', () => {
         expect(simpleSum(1,2)).to.equal(3)
     })
@@ -21,22 +15,22 @@ describe('default suite', () => {
         expect(distributeProportionally(300, {'cheese':1, 'chicken':2})).to.eql({ cheese: 100, chicken: 200 })
     })
     it('deposit lump sum', () => {
-        expect(deposit([oPlan,mPlan], [6])).to.eql({'chicken':4,'cheese':2})
+        expect(deposit(mPlan,oPlan, [6])).to.eql({'chicken':4,'cheese':2})
     })
     it('deposit multiple', () => {
-        expect(deposit([oPlan,mPlan], [1,1,1,3])).to.eql({'chicken':4,'cheese':2})
+        expect(deposit(mPlan,oPlan, [1,1,1,3])).to.eql({'chicken':4,'cheese':2})
     })
     it('deposit excess', () => {
-        expect(deposit([oPlan,mPlan], [6.1])).to.eql({'chicken':4.07,'cheese':2.03})
+        expect(deposit(mPlan,oPlan, [6.1])).to.eql({'chicken':4.07,'cheese':2.03})
     })
     it('deposit distribute', () => {
-        expect(deposit([oPlan,mPlan], [30])).to.eql({'chicken':20,'cheese':10} )
+        expect(deposit(mPlan,oPlan, [30])).to.eql({'chicken':20,'cheese':10} )
     })
     it('deposit distribute one-time only', () => {
-        expect(deposit([oPlan], [30])).to.eql({'chicken':20,'cheese':10} )
+        expect(deposit({},oPlan, [30])).to.eql({'chicken':20,'cheese':10} )
     })
     it('deposit distribute one-month only', () => {
-        expect(deposit([mPlan], [30])).to.eql({'chicken':20,'cheese':10} )
+        expect(deposit(mPlan, {}, [30])).to.eql({'chicken':20,'cheese':10} )
     })
 })
 describe('compute funds suite', () => {

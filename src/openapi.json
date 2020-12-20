@@ -1,0 +1,190 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "Deposit",
+    "description": "This is a Swagger interface to use the deposit function.",
+    "termsOfService": "http://swagger.io/terms/",
+    "contact": {
+      "email": "apiteam@swagger.io"
+    },
+    "license": {
+      "name": "Apache 2.0",
+      "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+    },
+    "version": "1.0.0"
+  },
+  "externalDocs": {
+    "description": "Find out more about Swagger",
+    "url": "http://swagger.io"
+  },
+  "servers": [
+    {
+      "url": "https://deposit.yknoodle.repl.co/"
+    }
+  ],
+  "tags": [
+    {
+      "name": "deposit",
+      "description": "Deposit API",
+      "externalDocs": {
+        "description": "email",
+        "url": "damien.hoyk@gmail.com"
+      }
+    }
+  ],
+  "paths": {
+    "/deposit/peek": {
+      "post": {
+        "tags": [
+          "deposit"
+        ],
+        "summary": "Peek at deposit allocations",
+        "description": "",
+        "operationId": "depositPeek",
+        "requestBody": {
+          "description": "Computes the expected portfolio allocation based on the inputs received",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PeekDeposit"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successfully computed deposit allocation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Portfolio"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/deposit/peek/v0": {
+      "post": {
+        "tags": [
+          "deposit"
+        ],
+        "summary": "Prototype peek at deposit allocations",
+        "description": "",
+        "operationId": "depositPeekV0",
+        "requestBody": {
+          "description": "Initial prototype of the same function. Input structure is very different because of my interpretation of the task.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PeekDeposit0"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successfully computed deposit allocation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Portfolio"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "PeekDeposit": {
+        "type": "object",
+        "properties": {
+          "monthly": {
+            "type": "array",
+            "description": "Input for the monthly plan against multiple portfolios",
+            "items": {
+              "$ref": "#/components/schemas/Portfolio"
+            }
+          },
+          "onetime": {
+            "type": "array",
+            "description": "Input for the one-time transfer against multiple portfolios",
+            "items": {
+              "$ref": "#/components/schemas/Portfolio"
+            }
+          },
+          "deposits": {
+            "$ref": "#/components/schemas/Deposits"
+          }
+        }
+      },
+      "Portfolio": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Name of the portfolio",
+            "example": "Investment"
+          },
+          "allocation": {
+            "type": "number",
+            "description": "Amount allocated to the portfolio",
+            "example": 2
+          }
+        }
+      },
+      "Deposits": {
+        "type": "array",
+        "description": "Represents multiple inbound bank transfers",
+        "example": [
+          2,
+          3
+        ],
+        "items": {
+          "type": "number"
+        }
+      },
+      "Plan": {
+        "type": "object",
+        "properties": {
+          "monthly": {
+            "type": "boolean"
+          },
+          "portfolios": {
+            "type": "object",
+            "example": {
+              "Retirement": 4,
+              "Investment": 3
+            }
+          }
+        }
+      },
+      "PeekDeposit0": {
+        "description": "Prototype request from initial planning",
+        "type": "object",
+        "properties": {
+          "plans": {
+            "type": "array",
+            "description": "Input for the monthly and investment plan against multiple portfolios - should only a maximum of 2 in this list",
+            "items": {
+              "$ref": "#/components/schemas/Plan"
+            }
+          },
+          "deposits": {
+            "$ref": "#/components/schemas/Deposits"
+          }
+        }
+      }
+    }
+  }
+}

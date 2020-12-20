@@ -3,14 +3,12 @@ import {empty, format2dp, mergeMap} from "./utilities";
 export const simpleSum = (a, b) => {
     return a + b
 }
-export const deposit = (plans, deposits) => {
-    const oncePlan = getPlan(plans)
-    const monthPlan = getPlan(plans, true)
+export const deposit = (monthly, onetime, deposits) => {
     const funds = deposits.reduce((sum, curr) => sum + curr, 0)
-    const onceFund = computeOnceFund(funds, oncePlan, empty(monthPlan)) // compute one-time plan total allocation first
+    const onceFund = computeOnceFund(funds, onetime, empty(monthly)) // compute one-time plan total allocation first
     const monthFund = computeMonthFund(funds, onceFund) // then compute monthly plan total allocation
-    const onceAllocation = distributeProportionally(onceFund, oncePlan)
-    const monthAllocation = distributeProportionally(monthFund, monthPlan)
+    const onceAllocation = distributeProportionally(onceFund, onetime)
+    const monthAllocation = distributeProportionally(monthFund, monthly)
     return mergeMap(onceAllocation, monthAllocation, mergeAllocations)
 }
 /**
@@ -44,3 +42,4 @@ export const distributeProportionally = (funds, plan) => {
         }, {})
 }
 export const mergeAllocations = (a1, a2) => format2dp(a1+a2)
+export const listPortfolio = ([k,v]) => {return {name: k, allocation: v}}
