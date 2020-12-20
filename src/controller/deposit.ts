@@ -13,8 +13,8 @@ depositRouter.post('/peek',(req,res) => {
         monthly: monthlyArray, onetime: onetimeArray, deposits
     } = req.body
     console.log('received', monthlyArray, onetimeArray, deposits)
-    const onetime = mergeArrayToMap(onetimeArray, o=>o.name, o=>o.allocation, mergeAllocations)
-    const monthly = mergeArrayToMap(monthlyArray, o=>o.name, o=>o.allocation, mergeAllocations)
+    const onetime = mergeArrayToMap(onetimeArray?onetimeArray:[], o=>o.name, o=>o.allocation, mergeAllocations)
+    const monthly = mergeArrayToMap(monthlyArray?monthlyArray:[], o=>o.name, o=>o.allocation, mergeAllocations)
     res.send(Object.entries(deposit(monthly, onetime,deposits)).map(listPortfolio))
 })
 depositRouter.post('/peek/v0',(req,res) => {

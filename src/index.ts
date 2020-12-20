@@ -2,10 +2,11 @@ import express from 'express'
 import {depositRouter} from "./controller/deposit"
 import swagger from 'swagger-ui-express'
 import swaggerDocument from './openapi.json'
+import cors from 'cors'
 let app = express();
 const port = 3000;
 app.use(
-    express.json())
+    express.json(), cors())
 app.use('/deposit', depositRouter)
 app.use('/', swagger.serve, swagger.setup(swaggerDocument))
 app.listen(port, err => {
