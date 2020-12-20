@@ -1,0 +1,6 @@
+./node_modules
+./bin
+./dist
+
+# Project exclude paths
+/node_modules/
