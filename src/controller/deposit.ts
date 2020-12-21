@@ -1,6 +1,5 @@
 import express from 'express'
-import {deposit, getPlan, listPortfolio, mergeAllocations} from "../deposit";
-import {mergeArrayToMap} from "../utilities";
+import {getPlan, depositService0, depositService} from "../deposit";
 
 export const depositRouter = express.Router()
 
@@ -12,17 +11,25 @@ depositRouter.post('/peek',(req,res) => {
     const {
         monthly: monthlyArray, onetime: onetimeArray, deposits
     } = req.body
-    console.log('received', monthlyArray, onetimeArray, deposits)
-    const onetime = mergeArrayToMap(onetimeArray?onetimeArray:[], o=>o.name, o=>o.allocation, mergeAllocations)
-    const monthly = mergeArrayToMap(monthlyArray?monthlyArray:[], o=>o.name, o=>o.allocation, mergeAllocations)
-    res.send(Object.entries(deposit(monthly, onetime,deposits)).map(listPortfolio))
+    console.log('received', req.body)
+    depositService(monthlyArray, onetimeArray, deposits)
+    .then(result => {
+        if (result.validationErrors.length>0)
+            res.status(400).send({problems: result.validationErrors})
+        else res.status(200).send({portfolios: result.values})
+    }).catch(err => res.status(500).send(err))
 })
 depositRouter.post('/peek/v0',(req,res) => {
     const {
         plans, deposits
     } = req.body
-    console.log('received', plans, deposits)
+    console.log('received', req.body)
     const onetime = getPlan(plans)
     const monthly = getPlan(plans, true)
-    res.send(Object.entries(deposit(monthly, onetime, deposits)).map(listPortfolio))
+    depositService0(monthly, onetime, deposits)
+        .then(result => {
+            if (result.validationErrors.length>0)
+                res.status(400).send({problems: result.validationErrors})
+            else res.status(200).send({portfolios: result.values})
+        }).catch(err => res.status(500).send(err))
 })
