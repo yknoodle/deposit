@@ -11,6 +11,9 @@
   "servers": [
     {
       "url": "https://deposit.yknoodle.repl.co/"
+    },
+    {
+      "url": "http://localhost:3000/"
     }
   ],
   "tags": [
@@ -29,11 +32,141 @@
         "description": "",
         "operationId": "depositPeek",
         "requestBody": {
-          "description": "Computes the expected portfolio allocation based on the inputs received",
+          "description": "Computes the expected portfolio allocation based on the inputs received. If alphabets are found in the allocation field, the  allocation amount is ignored",
           "content": {
             "application/json": {
               "schema": {
                 "$ref": "#/components/schemas/PeekDeposit"
+              },
+              "examples": {
+                "basic": {
+                  "value": {
+                    "onetime": [
+                      {
+                        "name": "retirement",
+                        "allocation": "3"
+                      },
+                      {
+                        "name": "emergency",
+                        "allocation": 2
+                      },
+                      {
+                        "name": "investment",
+                        "allocation": 1
+                      },
+                      {
+                        "name": "savings",
+                        "allocation": 2
+                      }
+                    ],
+                    "monthly": [
+                      {
+                        "name": "savings",
+                        "allocation": 1
+                      },
+                      {
+                        "name": "investment",
+                        "allocation": 1
+                      }
+                    ],
+                    "deposits": [
+                      1,
+                      1,
+                      2,
+                      3,
+                      3
+                    ]
+                  }
+                },
+                "insufficient-deposits": {
+                  "value": {
+                    "onetime": [
+                      {
+                        "name": "retirement",
+                        "allocation": 2
+                      },
+                      {
+                        "name": "emergency",
+                        "allocation": 10
+                      },
+                      {
+                        "name": "investment",
+                        "allocation": 3
+                      }
+                    ],
+                    "monthly": [
+                      {
+                        "name": "savings",
+                        "allocation": 100
+                      }
+                    ],
+                    "deposits": [
+                      5
+                    ]
+                  }
+                },
+                "one-time-only": {
+                  "value": {
+                    "onetime": [
+                      {
+                        "name": "investment",
+                        "allocation": 2
+                      },
+                      {
+                        "name": "retirement",
+                        "allocation": "6"
+                      },
+                      {
+                        "name": "saving",
+                        "allocation": 4
+                      }
+                    ],
+                    "deposits": [
+                      4,
+                      4,
+                      4
+                    ]
+                  }
+                },
+                "negative-allocation": {
+                  "value": {
+                    "onetime": [
+                      {
+                        "name": "retirement",
+                        "allocation": -3
+                      },
+                      {
+                        "name": "emergency",
+                        "allocation": "-2"
+                      },
+                      {
+                        "name": "investment",
+                        "allocation": 1
+                      },
+                      {
+                        "name": "savings",
+                        "allocation": 2
+                      }
+                    ],
+                    "monthly": [
+                      {
+                        "name": "savings",
+                        "allocation": 1
+                      },
+                      {
+                        "name": "investment",
+                        "allocation": 1
+                      }
+                    ],
+                    "deposits": [
+                      1,
+                      1,
+                      2,
+                      3,
+                      3
+                    ]
+                  }
+                }
               }
             }
           }
@@ -51,6 +184,36 @@
                 }
               }
             }
+          },
+          "400": {
+            "description": "Returned when problems found with request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationError"
+                },
+                "examples": {
+                  "negative-allocation": {
+                    "value": {
+                      "problems": [
+                        {
+                          "key": "investment",
+                          "property": "allocation",
+                          "value": -2,
+                          "reason": "< 0"
+                        },
+                        {
+                          "key": "retirement",
+                          "property": "allocation",
+                          "value": "-6",
+                          "reason": "< 0"
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
           }
         }
       }
@@ -63,6 +226,7 @@
         "summary": "Prototype peek at deposit allocations",
         "description": "",
         "operationId": "depositPeekV0",
+        "deprecated": true,
         "requestBody": {
           "description": "Initial prototype of the same function. Input structure is very different because of my interpretation of the task.",
           "content": {
@@ -83,6 +247,16 @@
                   "items": {
                     "$ref": "#/components/schemas/Portfolio"
                   }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Some problems were found with the request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationError"
                 }
               }
             }
@@ -139,6 +313,24 @@
         ],
         "items": {
           "type": "number"
+        }
+      },
+      "ValidationError": {
+        "type": "object",
+        "description": "Returned when there are unexpected values that cannot be handled",
+        "properties": {
+          "key": {
+            "type": "object"
+          },
+          "property": {
+            "type": "object"
+          },
+          "value": {
+            "type": "object"
+          },
+          "reason": {
+            "type": "object"
+          }
         }
       },
       "Plan": {

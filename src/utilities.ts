@@ -7,8 +7,8 @@ export const formatMap = (allocation, formatter) => {
 }
 export const format2dp = v => Math.round(v * 100) / 100
 export const empty = obj => Object.keys(obj).length == 0
-export const mergeMap = (v1, v2, merge) => {
-    return Object.entries(v1).concat(Object.entries(v2))
+export const mergeMap = (map1, map2, merge=(v1, v2)=>v1+v2) => {
+    return Object.entries(map1).concat(Object.entries(map2))
         .reduce((acc, [k, v]) => {
             if (acc[k]) acc[k] = merge(acc[k], v)
             else acc[k] = v
@@ -24,3 +24,16 @@ export const mergeArrayToMap = (array, kMapper, vMapper, merge) => {
         return acc
     }, {})
 }
+/**
+ * validates a map based on logic supplied by a validator
+ * @param map to be validated
+ * @param validator implements the validation logic
+ * @param identifier
+ * @returns array of validation errors depending on validator
+ */
+export const validate = (map, validator, identifier=map=>Object.entries(map)[0][1]) => {
+    return Object.entries(map).map(validator)
+        .filter(o => o != null)
+        .map((err: object) => {return {key:identifier(map), ...err}})
+}
+export const flatten = (acc, curr) => acc.concat(curr)
